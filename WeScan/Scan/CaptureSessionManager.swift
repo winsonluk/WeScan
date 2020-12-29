@@ -9,6 +9,7 @@
 import Foundation
 import CoreMotion
 import AVFoundation
+import UIKit
 
 /// A set of functions that inform the delegate object of the state of the detection.
 protocol RectangleDetectionDelegateProtocol: NSObjectProtocol {
@@ -62,8 +63,13 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
     
     // MARK: Life Cycle
     
-    init?(videoPreviewLayer: AVCaptureVideoPreviewLayer) {
+    init?(videoPreviewLayer: AVCaptureVideoPreviewLayer, delegate: RectangleDetectionDelegateProtocol? = nil) {
         self.videoPreviewLayer = videoPreviewLayer
+        
+        if delegate != nil {
+            self.delegate = delegate
+        }
+        
         super.init()
         
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else {
@@ -73,7 +79,12 @@ final class CaptureSessionManager: NSObject, AVCaptureVideoDataOutputSampleBuffe
         }
         
         captureSession.beginConfiguration()
-        captureSession.sessionPreset = .photo
+        
+        let photoPreset = AVCaptureSession.Preset.photo
+        
+        if captureSession.canSetSessionPreset(photoPreset) {
+            captureSession.sessionPreset = photoPreset
+        }
         
         photoOutput.isHighResolutionCaptureEnabled = true
         

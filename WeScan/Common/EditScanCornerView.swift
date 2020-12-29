@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreImage
 
 /// A UIView used by corners of a quadrilateral that is aware of its position.
 final class EditScanCornerView: UIView {
@@ -24,6 +25,13 @@ final class EditScanCornerView: UIView {
         layer.lineWidth = 1.0
         return layer
     }()
+
+    /// Set stroke color of coner layer
+    public var strokeColor: CGColor? {
+        didSet {
+            circleLayer.strokeColor = strokeColor
+        }
+    }
     
     init(frame: CGRect, position: CornerPosition) {
         self.position = position
